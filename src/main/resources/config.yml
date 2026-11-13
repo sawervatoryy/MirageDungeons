@@ -1,0 +1,565 @@
+# ======================================================================
+#  MirageDungeons — сокровищницы для рейда (5 уровней)
+#  Цвета в тексте: &f (белый), &b (голубой), также &#RRGGBB
+#
+#  КАК УСТРОЕНА НАСТРОЙКА
+#  Всё, что написано здесь, в корне файла, — значения ПО УМОЛЧАНИЮ для всех уровней.
+#  Любой параметр можно ПЕРЕОПРЕДЕЛИТЬ внутри конкретного уровня (секция levels.N):
+#  просто напишите там ту же настройку с другим значением, например
+#      levels:
+#        5:
+#          rg-radius: 20
+#          protection:
+#            pvp: false
+#            blocked-commands: [home, tpa]
+#          events:
+#            open:
+#              title: { title: "&bТревога!", target: all }
+#  Вложенные настройки объединяются: переопределяете только то, что нужно, остальное
+#  остаётся по умолчанию. Списки (например guardians, aura-effects) заменяются целиком.
+#  Проверить конфиг после правок: /randomdang validate
+# ======================================================================
+
+# ------------------------------------------------------------ расписание
+# Миры, где данжи появляются сами. Для отдельного уровня можно задать свой список worlds.
+worlds:
+  - world
+
+schedule:
+  # night    — каждую ночь (раз в nights-interval ночей)
+  # interval — каждые interval-minutes минут реального времени
+  # both     — и то и другое
+  # off      — автоспавна нет, только команда /randomdang spawn
+  mode: night
+  nights-interval: 1
+  interval-minutes: 60
+  interval-amount: 3
+  # Пауза между появлением данжей в одной партии (тиков), чтобы не было лагов
+  stagger-ticks: 20
+
+# С какого тика суток считается ночью (13000 — закат)
+night-start-tick: 13000
+# Сколько данжей спавнить за одну ночь (на каждый мир)
+restart-danges: 7
+# Максимум активных (не залутанных) данжей на мир — выше спавн отключается
+max-danges: 20
+# Сколько раз пытаться найти подходящее место для одного данжа
+spawn-attempts: 40
+
+# ------------------------------------------------------------ удаление и откат
+cleanup:
+  # Что делать с залутанным данжем:
+  #   night — удалить в начале следующей ночи
+  #   delay — удалить через looted-delay-seconds секунд после последнего сундука
+  #   never — не удалять автоматически (только командой)
+  looted: night
+  looted-delay-seconds: 600
+  # Удалять нетронутые данжи через N минут после появления (0 — не удалять)
+  unopened-lifetime-minutes: 0
+  # Удалять вскрытые, но не залутанные данжи через N минут после вскрытия (0 — не удалять)
+  opened-lifetime-minutes: 0
+
+# ------------------------------------------------------------ правила спавна (можно в уровне)
+# Границы поиска координат
+spawn-min-x: -2000
+spawn-max-x: 2000
+spawn-min-z: -2000
+spawn-max-z: 2000
+# Допустимая высота поверхности
+spawn-min-y: -64
+spawn-max-y: 320
+# Минимальное расстояние между данжами и от точки спавна мира (блоков, 0 — без ограничения)
+min-distance-between: 150
+min-distance-from-spawn: 0
+# Не спавнить в воде и лаве
+avoid-liquid: true
+# Не выходить за границу мира
+respect-world-border: true
+# Материалы, на которые нельзя ставить данж (поверхность)
+ground-blacklist: [ICE, PACKED_ICE, BLUE_ICE, MAGMA_BLOCK, CACTUS, POWDER_SNOW]
+# Биомы (без minecraft:). Если whitelist не пуст — только в этих биомах. blacklist — исключить.
+biome-whitelist: []
+biome-blacklist: []
+
+# ------------------------------------------------------------ регион, сундуки, лут (можно в уровне)
+# Радиус защищённого региона от центра схематики (по высоте регион на весь мир)
+rg-radius: 10
+# Какие блоки считаются сундуками данжа (должны быть контейнерами)
+chest-blocks: [CHEST, TRAPPED_CHEST, BARREL]
+# random — случайные слоты, default — по порядку с 0-го
+loot-logical: random
+# Своё количество предметов для отдельных типов контейнеров (необязательно)
+loot-amount-by-type: {}
+#  BARREL: "3-6"
+
+# ------------------------------------------------------------ значения по умолчанию для уровней
+sink: 0                       # на сколько блоков заглубить схематику
+mimic-chance: 0               # % сундуков-мимиков
+locked-chests-percent: 0      # % запертых сундуков (нужен ключ)
+open-delay: 0                 # секунд до открытия сундуков после взрыва блока привата
+alarm: false                  # объявление всему серверу при вскрытии
+alarm-message: alarm          # ключ сообщения из messages.yml
+alarm-sound: ""               # звук для всех игроков, формат имя:громкость:высота
+compass-blur: 0               # неточность координат на компасе (блоков)
+beam: false                   # луч в небе на время таймера
+beam-height: 120
+beam-step: 3
+aura-effects: []              # эффекты на игроков в регионе, формат ТИП:тики:уровень
+aura-phases: [ACTIVE, COUNTDOWN, OPEN]   # когда действует аура
+enter-display: actionbar      # actionbar | chat | title | none — как показывать вход/выход
+max-active: 0                 # максимум этого уровня на мир (0 — без ограничения)
+
+# Стражи
+guardian-radius: 6            # радиус вокруг блока привата, где они появляются
+wave-delay: 20                # секунд между волнами (если у мобов указана wave: 2, 3...)
+bar-radius: 64                # радиус, в котором игроки видят боссбары
+
+# Цвета и стили боссбаров (BarColor: PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE; BarStyle: SOLID, SEGMENTED_6/10/12/20)
+bars:
+  countdown: { color: WHITE, style: SOLID }
+  boss: { color: BLUE, style: SEGMENTED_10 }
+
+# Вставка схематик. Всё кроме blocks-per-tick можно переопределить в уровне.
+paste:
+  air: true                   # вставлять воздух (вычищает землю внутри схематики)
+  blocks-per-tick: 4000       # сколько блоков за тик (меньше — меньше лагов), только глобально
+  # Откуда считать положение схематики:
+  #   schematic — как при //paste в WorldEdit (по точке, где стоял автор при //copy)
+  #   center    — центр схематики ставится в точку спавна, а слой ground-layer ложится на уровень земли
+  #               (нужно для схематик с произвольным смещением, например из BetterStructures)
+  origin: schematic
+  # Номер слоя схематики (отсчёт с 0 снизу), который ляжет на первый блок над поверхностью земли.
+  # Всё, что ниже, окажется под землёй. Только для origin: center.
+  ground-layer: 0
+  # Блоки-маски: они НЕ вставляются, на их месте остаётся местность (BARRIER и BEDROCK
+  # в схематиках BetterStructures означают «здесь рельеф»)
+  skip-blocks: []
+  # Замена блоков при вставке: ИЗ: В. Например убрать спавнеры и таблички-метки
+  replace: {}
+  #  SPAWNER: AIR
+  #  OAK_SIGN: AIR
+
+# Ядро (блок привата). mode: schematic — искать блок guard-block в самой схематике,
+# center — поставить ядро строго в центр постройки (в нижнюю свободную клетку с полом под ней)
+core:
+  mode: schematic
+  y: auto                     # auto или номер слоя схематики
+  search-radius: 3            # если ровно в центре места нет, ищем вокруг на этот радиус
+  # Оболочка вокруг ядра (только при mode: center). Слои идут от ближнего к дальнему:
+  # слой 1 — куб 3×3×3 вокруг ядра, слой 2 — следующая «скорлупа» 5×5×5 и т. д.
+  # В каждом слое материал каждого блока выбирается случайно по весам: МАТЕРИАЛ: вес.
+  shield:
+    enabled: false
+    layers:
+      - { OBSIDIAN: 5, CRYING_OBSIDIAN: 3, ANCIENT_DEBRIS: 2 }
+
+# Сундуки, которые плагин добавляет сам: вдоль стен на полу, лицом в комнату.
+# Добавляются только недостающие: если в схематике уже есть сундуки, они учитываются.
+auto-chests:
+  enabled: false
+  count: "3-5"                # сколько контейнеров должно быть в данже всего
+  block: CHEST                # CHEST | BARREL | TRAPPED_CHEST | SHULKER_BOX ...
+  min-distance-from-core: 3   # минимум блоков от ядра
+  min-spacing: 3              # минимум блоков между сундуками
+  min-layer: 0                # только выше этого слоя схематики (например, чтобы не класть в подземелье)
+  max-layer: -1               # только ниже этого слоя (-1 — без ограничения)
+
+# Взрывы
+explosion-opens-guard: true   # взрыв, разрушивший блок привата, открывает данж
+# Любой взрыв ближе этого радиуса к блоку привата тоже открывает данж, даже если ядро не разрушено.
+# 0 — выключено (по умолчанию: иначе оболочка из обсидиана не имела бы смысла).
+explosion-trigger-radius: 0
+
+# ------------------------------------------------------------ защита региона
+# Сундуки и бочки защищены от взрывов и разрушения ВСЕГДА (независимо от режима).
+protection:
+  # worldguard — приват данжа это регион WorldGuard, защиту задают флаги из секции worldguard (ниже)
+  # internal   — защита силами самого плагина (параметры pvp, before-open и after-open ниже)
+  mode: worldguard
+  pvp: true                   # только для mode: internal; в режиме worldguard используйте флаг pvp
+  before-open:                # только для mode: internal. Пока блок привата цел
+    block-break: false
+    block-place: false
+    tnt: false
+  after-open:                 # только для mode: internal. После уничтожения блока привата
+    block-break: true
+    block-place: true
+    tnt: false
+  # Белые и чёрные списки материалов (работают в обоих режимах, когда ломать/ставить вообще разрешено).
+  # Если whitelist не пуст — разрешены только перечисленные блоки.
+  break-whitelist: []
+  break-blacklist: []
+  place-whitelist: []
+  place-blacklist: []
+  # Команды, запрещённые внутри региона (без /)
+  blocked-commands: []
+  # Защита от лавакастов и укреплений ядра: пока ядро цело, в регионе нельзя лить лаву и воду,
+  # нельзя получить обсидиан/булыжник от встречи лавы и воды и нельзя ставить блоки, которыми
+  # закрывают ядро от взрывов (обсидиан, древние обломки). Действует независимо от режима защиты.
+  anti-grief:
+    enabled: true
+    phases: [ACTIVE]            # когда действует: ACTIVE — пока ядро цело (до рейда)
+    deny-buckets: [LAVA_BUCKET, WATER_BUCKET]   # вёдра, которые нельзя выливать (и из раздатчиков)
+    deny-fluid-flow: true       # жидкости не затекают в регион и не текут внутри него
+    deny-generation: [OBSIDIAN, COBBLESTONE, STONE, BASALT]   # что не должно образовываться из лавы и воды
+    deny-place: [OBSIDIAN, CRYING_OBSIDIAN, ANCIENT_DEBRIS, NETHERITE_BLOCK]   # нельзя ставить
+
+# ------------------------------------------------------------ приваты через WorldGuard
+# Для каждого данжа создаётся регион WorldGuard с именем «<region-prefix><id данжа>».
+# Плагин сам удаляет регион вместе с данжем и откатом территории.
+# Блок привата открывается по-прежнему самим плагином: даже если флаги запрещают ломать блоки
+# или tnt deny отменяет взрыв, уничтожение блока привата откроет данж.
+# Формат флага: «имя значение», как в команде /rg flag. Все флаги WorldGuard и плагинов-расширений.
+# Примеры (не включены): "greeting &fВы вошли на территорию сокровищницы!", "farewell &fВы вышли.",
+#                        "entry allow", "mob-spawning deny", "blocked-cmds ..."
+# Можно переопределить в уровне (списки заменяются целиком).
+worldguard:
+  region-prefix: "mirage_"
+  priority: 1000
+  # Удалить регион сразу после рейда, то есть после уничтожения блока привата (как у обычного привата:
+  # сломали ядро — приват исчез). Если false, после рейда вместо удаления выставляются flags-after.
+  remove-on-raid: true
+  # Флаги, пока блок привата цел. Сундуки закрыты (chest-access deny) до рейда.
+  flags-before:
+    - "build deny"
+    - "tnt deny"
+    - "pvp allow"
+    - "chest-access deny"
+    - "use allow"
+    - "interact allow"
+    - "lava-flow deny"
+    - "water-flow deny"
+  # Флаги после рейда (используются только при remove-on-raid: false)
+  flags-after:
+    - "build allow"
+    - "block-break allow"
+    - "block-place allow"
+    - "tnt deny"
+    - "pvp allow"
+    - "use allow"
+    - "interact allow"
+    - "chest-access allow"
+
+# ------------------------------------------------------------ мимики и ловушки
+mimic:
+  type: ZOMBIE
+  name: "&bМимик"
+  health: 40
+  bonus-rolls: 2              # сколько предметов из лута падает с мимика
+
+trap:                         # нажимные плиты внутри данжа
+  chance: 100                 # шанс срабатывания, %
+  cooldown-seconds: 3
+  damage: 0
+  arrows: 0
+  effects: []
+  message: true               # писать сообщение «Ловушка!»
+
+# ------------------------------------------------------------ компас и ключи
+compass:
+  name: "&bКомпас сокровищниц"
+  lore:
+    - "&fПравый клик — показывает координаты"
+    - "&fсокровищницы"
+  custom-model-data: 1007
+  cooldown-seconds: 7200
+  mode: random                # random — случайная, nearest — ближайшая
+  levels: []                  # какие уровни компас может показать (пусто — все)
+  consume: false              # тратить компас при использовании
+  point-needle: true          # направлять стрелку компаса на найденную точку
+  sound: "item.lodestone_compass.lock:1:1"
+
+key:
+  material: TRIAL_KEY
+  name: "&bКлюч сокровищницы &f{level} ур."
+  lore:
+    - "&fОткрывает запертый сундук"
+    - "&fв сокровищнице {level} уровня"
+
+# ------------------------------------------------------------ события
+# Что происходит при событиях. Все поля необязательны.
+# События: spawn, open, countdown-done, chest-open, unlock, loot-complete, boss-death, mimic, trap
+#   (open — рейд: уничтожено ядро; chest-open — сундук открыт впервые)
+# Поля события:
+#   enabled: true|false
+#   sounds: ["имя:громкость:высота:цель"]   цель: here | player | world | all (имя без minecraft:)
+#   messages: [..]        игроку, вызвавшему событие
+#   actionbar: "текст"    игроку
+#   broadcast: [..]       всем игрокам сервера
+#   nearby-messages: [..] игрокам рядом (nearby-radius, по умолчанию 50)
+#   title: { title, subtitle, fade-in, stay, fade-out, target: player|nearby|all }
+#   explosion: true       частицы взрыва в точке события
+#   lightning: true       визуальная молния (без урона)
+#   particles: ["ТИП:кол-во:разброс X:Y:Z:скорость"]   частицы, например "TOTEM_OF_UNDYING:40:0.4:0.6:0.4:0.3"
+#   firework: { enabled, type, colors, fade, trail, flicker, count, power, instant }
+#   commands: ["[console] give {player} diamond 1", "[player] spawn"]
+# Переменные: {player} {level} {level-id} {id} {x} {y} {z} {world} {block}
+events:
+  open:
+    explosion: true
+    lightning: true             # визуальная молния без урона и пожара
+    particles:                  # ТИП:количество:разброс X:Y:Z:скорость
+      - "END_ROD:60:0.6:1.0:0.6:0.15"
+    sounds:
+      - "entity.lightning_bolt.thunder:2:1:here"
+  countdown-done:
+    sounds:
+      - "block.beacon.activate:2:1:here"
+  chest-open:
+    particles:
+      - "TOTEM_OF_UNDYING:40:0.4:0.6:0.4:0.3"
+      - "END_ROD:25:0.3:0.8:0.3:0.08"
+    sounds:
+      - "entity.experience_orb.pickup:1:0.8:here"
+    firework:
+      enabled: true
+      type: BALL_LARGE
+      colors: [WHITE, AQUA]
+      fade: [AQUA]
+      trail: true
+      flicker: false
+      count: 1
+      power: 0
+      instant: true
+  unlock:
+    sounds:
+      - "block.iron_door.open:1:1.5:player"
+  mimic:
+    sounds:
+      - "entity.wither.spawn:0.5:2:here"
+  trap:
+    sounds:
+      - "entity.arrow.shoot:1:0.8:here"
+  boss-death:
+    broadcast:
+      - "&b⚠ &fИгрок &b{player}&f победил босса сокровищницы {level}&f!"
+    sounds:
+      - "ui.toast.challenge_complete:1:1:all"
+
+# ======================================================================
+#  УРОВНИ
+#  Схематики кладите в plugins/MirageDungeons/schematics/
+#  guard-block — блок привата: он должен стоять в схематике.
+#  Сундуки из chest-blocks в схематике заполняются лутом сами.
+#  В комплекте 3 схематики (из пака BetterStructures), они копируются в plugins/MirageDungeons/schematics/:
+#    dang1.schem — подземный склеп (уровни 1–2), dang2.schem — гробница (3–4), dang3.schem — храм (5)
+#  Свою схематику делайте в WorldEdit: встаньте в центре на полу, //copy, //schem save dang1
+#  (читаются любые форматы схематик, которые понимает установленный WorldEdit)
+#
+#  Параметры моба (guardians и boss):
+#    type, amount, health, name, helmet, chestplate, leggings, boots, weapon,
+#    glowing, key-holder, wave (волна появления, по умолчанию 1), radius,
+#    attack-damage, speed (множитель скорости), effects ["ТИП:тики:уровень"],
+#    drops ["МАТЕРИАЛ:мин-макс:шанс%"], exp, clear-drops (убрать обычный дроп),
+#    bonus-rolls (только босс: предметов из лута при смерти)
+#  guaranteed-loot: ["МАТЕРИАЛ:мин-макс:шанс%"] — гарантированные предметы в случайных сундуках
+#  enabled: false — выключить уровень без удаления
+# ======================================================================
+levels:
+  1:
+    name: "&fЗабытый &bСклеп"
+    schematic: dang1.schem
+    paste:
+      origin: center
+      ground-layer: 9
+      skip-blocks: [BARRIER, BEDROCK]
+      replace: { SPAWNER: AIR, OAK_SIGN: AIR, OAK_WALL_SIGN: AIR }
+    core:
+      mode: center
+      shield:
+        enabled: true
+        layers:
+          - { OBSIDIAN: 6, CRYING_OBSIDIAN: 3, ANCIENT_DEBRIS: 1 }
+    auto-chests: { enabled: true, count: "3-4" }
+    guard-block: LODESTONE            # Магнетит
+    guard-block-name: "Магнетит"
+    loot-amount: "5-10"
+    spawn-weight: 40
+    mimic-chance: 10
+    trap:
+      damage: 4
+      arrows: 3
+      effects:
+        - "SLOWNESS:80:1"
+    guardians:
+      - { type: ZOMBIE, amount: 3, health: 24, name: "&fСтраж склепа" }
+      - { type: SKELETON, amount: 2, health: 20, name: "&fСтрелок склепа" }
+
+  2:
+    name: "&fЧёрный &bБастион"
+    schematic: dang1.schem
+    paste:
+      origin: center
+      ground-layer: 9
+      skip-blocks: [BARRIER, BEDROCK]
+      replace: { SPAWNER: AIR, OAK_SIGN: AIR, OAK_WALL_SIGN: AIR }
+    core:
+      mode: center
+      shield:
+        enabled: true
+        layers:
+          - { OBSIDIAN: 4, CRYING_OBSIDIAN: 4, ANCIENT_DEBRIS: 2 }
+    auto-chests: { enabled: true, count: "4-6" }
+    guard-block: RESPAWN_ANCHOR       # Якорь возрождения
+    guard-block-name: "Якорь возрождения"
+    loot-amount: "10-15"
+    spawn-weight: 30
+    mimic-chance: 12
+    alarm: true
+    alarm-sound: "entity.wither.spawn:0.6:1.2"
+    compass-blur: 20
+    trap:
+      damage: 6
+      arrows: 5
+      effects:
+        - "SLOWNESS:100:1"
+        - "BLINDNESS:60:0"
+    guardians:
+      - { type: ZOMBIE, amount: 4, health: 30, name: "&fСтраж бастиона", helmet: IRON_HELMET, chestplate: IRON_CHESTPLATE, weapon: IRON_SWORD }
+      - { type: SKELETON, amount: 3, health: 24, name: "&fЛучник бастиона", helmet: IRON_HELMET }
+
+  3:
+    name: "&fЗапертое &bЛогово"
+    schematic: dang2.schem
+    paste:
+      origin: center
+      ground-layer: 14
+      skip-blocks: [BARRIER, BEDROCK]
+      replace: { SPAWNER: AIR, OAK_SIGN: AIR, OAK_WALL_SIGN: AIR }
+    core:
+      mode: center
+      shield:
+        enabled: true
+        layers:
+          - { OBSIDIAN: 3, CRYING_OBSIDIAN: 3, ANCIENT_DEBRIS: 4 }
+    auto-chests: { enabled: true, count: "5-7" }
+    guard-block: CRYING_OBSIDIAN      # Плачущий обсидиан
+    guard-block-name: "Плачущий обсидиан"
+    loot-amount: "12-18"
+    spawn-weight: 20
+    mimic-chance: 10
+    locked-chests-percent: 40
+    alarm: true
+    alarm-sound: "entity.wither.spawn:0.6:1.2"
+    compass-blur: 40
+    trap:
+      damage: 8
+      arrows: 6
+      effects:
+        - "SLOWNESS:120:2"
+        - "BLINDNESS:80:0"
+    guardians:
+      - { type: ZOMBIE, amount: 4, health: 36, name: "&fСтраж логова", helmet: IRON_HELMET, chestplate: IRON_CHESTPLATE, leggings: IRON_LEGGINGS, weapon: IRON_SWORD }
+      - { type: WITHER_SKELETON, amount: 1, health: 80, name: "&bХранитель ключа", key-holder: true, glowing: true, weapon: STONE_SWORD }
+      # вторая волна через wave-delay секунд
+      - { type: SKELETON, amount: 3, health: 28, name: "&fЛучник логова", helmet: IRON_HELMET, wave: 2 }
+
+  4:
+    name: "&fСвятилище &bМаяка"
+    schematic: dang2.schem
+    paste:
+      origin: center
+      ground-layer: 14
+      skip-blocks: [BARRIER, BEDROCK]
+      replace: { SPAWNER: AIR, OAK_SIGN: AIR, OAK_WALL_SIGN: AIR }
+    core:
+      mode: center
+      shield:
+        enabled: true
+        layers:
+          - { OBSIDIAN: 5, CRYING_OBSIDIAN: 3, ANCIENT_DEBRIS: 2 }
+          - { ANCIENT_DEBRIS: 6, CRYING_OBSIDIAN: 3, OBSIDIAN: 1 }
+    auto-chests: { enabled: true, count: "6-8" }
+    guard-block: BEACON               # Маяк
+    guard-block-name: "Маяк"
+    loot-amount: "15-20"
+    spawn-weight: 8
+    mimic-chance: 8
+    locked-chests-percent: 30
+    open-delay: 90                    # сундуки открываются через 90 секунд
+    beam: true                        # луч в небе виден на всём сервере
+    alarm: true
+    alarm-sound: "entity.wither.spawn:0.6:1.2"
+    compass-blur: 80
+    bars:
+      countdown: { color: BLUE, style: SEGMENTED_10 }
+    trap:
+      damage: 10
+      arrows: 8
+      effects:
+        - "SLOWNESS:140:2"
+        - "BLINDNESS:100:0"
+    guardians:
+      - { type: ZOMBIE, amount: 6, health: 40, name: "&fСтраж святилища", helmet: DIAMOND_HELMET, chestplate: DIAMOND_CHESTPLATE, weapon: DIAMOND_SWORD }
+      - { type: SKELETON, amount: 4, health: 32, name: "&fЛучник святилища", helmet: DIAMOND_HELMET }
+      - { type: WITHER_SKELETON, amount: 2, health: 90, name: "&bХранитель ключа", key-holder: true, glowing: true, weapon: IRON_SWORD }
+
+  5:
+    name: "&fКоролевская &bСокровищница"
+    schematic: dang3.schem
+    paste:
+      origin: center
+      ground-layer: 13
+      skip-blocks: [BARRIER, BEDROCK]
+      replace: { SPAWNER: AIR, OAK_SIGN: AIR, OAK_WALL_SIGN: AIR }
+    core:
+      mode: center
+      shield:
+        enabled: true
+        layers:
+          - { ANCIENT_DEBRIS: 5, CRYING_OBSIDIAN: 4, OBSIDIAN: 1 }
+          - { OBSIDIAN: 4, CRYING_OBSIDIAN: 4, ANCIENT_DEBRIS: 2 }
+    auto-chests: { enabled: true, count: "8-10", min-layer: 13 }
+    guard-block: SCULK_SHRIEKER       # Крикун бездны (вместо незеритового блока)
+    guard-block-name: "Крикун бездны"
+    loot-amount: "20-27"
+    spawn-weight: 2
+    max-active: 1                     # одновременно только одна на мир
+    min-distance-from-spawn: 800      # не ближе 800 блоков к спавну мира
+    mimic-chance: 15
+    locked-chests-percent: 50
+    alarm: true
+    alarm-sound: "entity.wither.spawn:0.6:1.2"
+    compass-blur: 150
+    rg-radius: 14
+    # Тьма на всех, кто находится в регионе, пока данж не залутан
+    aura-effects:
+      - "DARKNESS:100:0"
+    guaranteed-loot:
+      - "NETHERITE_INGOT:1-1:30"
+      - "TOTEM_OF_UNDYING:1-1:50"
+    protection:
+      blocked-commands: [home, spawn, tpa, tpahere, warp, back]
+    events:
+      open:
+        title:
+          title: "&b&lКОРОЛЕВСКАЯ СОКРОВИЩНИЦА"
+          subtitle: "&fВскрыта игроком &b{player}"
+          target: all
+      loot-complete:
+        broadcast:
+          - "&fКоролевская сокровищница полностью залутана."
+    trap:
+      damage: 12
+      arrows: 10
+      effects:
+        - "SLOWNESS:160:2"
+        - "BLINDNESS:120:0"
+    boss:
+      type: WITHER_SKELETON
+      health: 400
+      name: "&bКороль-Страж"
+      weapon: NETHERITE_SWORD
+      helmet: NETHERITE_HELMET
+      chestplate: NETHERITE_CHESTPLATE
+      attack-damage: 14
+      speed: 1.15
+      effects: ["RESISTANCE:6000:0"]
+      drops: ["NETHER_STAR:1-1:100"]
+      exp: 500
+      bonus-rolls: 3                  # предметов из лута падает с босса
+      key-holder: true
+    guardians:
+      - { type: ZOMBIE, amount: 8, health: 50, name: "&fСтраж короля", helmet: NETHERITE_HELMET, chestplate: NETHERITE_CHESTPLATE, weapon: NETHERITE_SWORD }
+      - { type: SKELETON, amount: 6, health: 40, name: "&fЛучник короля", helmet: DIAMOND_HELMET }
+      - { type: WITHER_SKELETON, amount: 3, health: 100, name: "&bХранитель ключа", key-holder: true, glowing: true, weapon: DIAMOND_SWORD }

@@ -1,0 +1,51 @@
+# Лут по уровням. Предметы можно добавлять в игре: возьмите предмет в руку и
+#   /randomdang loot add <уровень> <вес>
+# Формат записи: material + min/max + weight, либо item (предмет целиком, с чарами и названием).
+# Чем больше weight, тем чаще выпадает.
+levels:
+  '1':
+    - { material: IRON_INGOT, min: 4, max: 12, weight: 30 }
+    - { material: GOLD_INGOT, min: 2, max: 6, weight: 20 }
+    - { material: COAL, min: 8, max: 20, weight: 25 }
+    - { material: BREAD, min: 4, max: 10, weight: 20 }
+    - { material: ARROW, min: 8, max: 24, weight: 15 }
+    - { material: EMERALD, min: 1, max: 3, weight: 10 }
+    - { material: GOLDEN_APPLE, min: 1, max: 2, weight: 6 }
+    - { material: IRON_PICKAXE, min: 1, max: 1, weight: 5 }
+    - { material: DIAMOND, min: 1, max: 2, weight: 3 }
+  '2':
+    - { material: IRON_INGOT, min: 8, max: 20, weight: 25 }
+    - { material: GOLD_INGOT, min: 4, max: 12, weight: 20 }
+    - { material: EMERALD, min: 2, max: 6, weight: 15 }
+    - { material: DIAMOND, min: 1, max: 4, weight: 12 }
+    - { material: ENDER_PEARL, min: 1, max: 4, weight: 10 }
+    - { material: GOLDEN_APPLE, min: 1, max: 3, weight: 10 }
+    - { material: EXPERIENCE_BOTTLE, min: 4, max: 12, weight: 10 }
+    - { material: ARROW, min: 16, max: 32, weight: 10 }
+  '3':
+    - { material: DIAMOND, min: 2, max: 5, weight: 20 }
+    - { material: EMERALD, min: 4, max: 10, weight: 15 }
+    - { material: GOLD_INGOT, min: 8, max: 20, weight: 15 }
+    - { material: ENDER_PEARL, min: 2, max: 6, weight: 10 }
+    - { material: GOLDEN_APPLE, min: 2, max: 4, weight: 10 }
+    - { material: NETHERITE_SCRAP, min: 1, max: 2, weight: 4 }
+    - { material: EXPERIENCE_BOTTLE, min: 8, max: 20, weight: 10 }
+    - { material: TOTEM_OF_UNDYING, min: 1, max: 1, weight: 2 }
+  '4':
+    - { material: DIAMOND, min: 3, max: 8, weight: 20 }
+    - { material: EMERALD, min: 6, max: 16, weight: 15 }
+    - { material: NETHERITE_SCRAP, min: 1, max: 3, weight: 8 }
+    - { material: ENDER_PEARL, min: 3, max: 8, weight: 10 }
+    - { material: GOLDEN_APPLE, min: 3, max: 6, weight: 10 }
+    - { material: EXPERIENCE_BOTTLE, min: 16, max: 32, weight: 10 }
+    - { material: TOTEM_OF_UNDYING, min: 1, max: 1, weight: 4 }
+    - { material: ENCHANTED_GOLDEN_APPLE, min: 1, max: 1, weight: 2 }
+  '5':
+    - { material: DIAMOND_BLOCK, min: 1, max: 2, weight: 15 }
+    - { material: NETHERITE_INGOT, min: 1, max: 2, weight: 6 }
+    - { material: NETHERITE_SCRAP, min: 2, max: 5, weight: 10 }
+    - { material: EMERALD_BLOCK, min: 1, max: 3, weight: 12 }
+    - { material: ENCHANTED_GOLDEN_APPLE, min: 1, max: 2, weight: 6 }
+    - { material: TOTEM_OF_UNDYING, min: 1, max: 1, weight: 8 }
+    - { material: EXPERIENCE_BOTTLE, min: 16, max: 32, weight: 12 }
+    - { material: ENDER_PEARL, min: 4, max: 12, weight: 10 }

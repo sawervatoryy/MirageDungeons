@@ -1,0 +1,22 @@
+name: MirageDungeons
+version: '${version}'
+main: org.github.sawervatoryy.mirageDungeons.MirageDungeons
+api-version: '1.21'
+load: POSTWORLD
+depend: [WorldEdit, WorldGuard]
+authors: [sawervatoryy]
+description: Сокровищницы-данжи для рейда в 5 уровней. MirageStudio.
+
+commands:
+  randomdang:
+    description: Управление сокровищницами MirageDungeons
+    usage: /randomdang help
+    aliases: [mdungeons, dang]
+
+permissions:
+  miragedungeons.admin:
+    description: Все админ-команды
+    default: op
+  miragedungeons.bypass:
+    description: Обход защиты данжей (ломать, строить, открывать сундуки)
+    default: op
