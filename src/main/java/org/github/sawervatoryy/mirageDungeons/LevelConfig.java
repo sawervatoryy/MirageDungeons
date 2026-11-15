@@ -310,7 +310,7 @@ public final class LevelConfig {
 
         for (String phase : new String[]{"before-open", "after-open"}) {
             for (String flag : new String[]{"block-break", "block-place", "tnt"}) {
-                boolean def = phase.equals("after-open") && !flag.equals("tnt");
+                boolean def = flag.equals("tnt") || phase.equals("after-open");   // tnt по умолчанию разрешён
                 l.prot.put(phase + "." + flag, m.getBoolean("protection." + phase + "." + flag, def));
             }
         }
@@ -320,11 +320,11 @@ public final class LevelConfig {
         // если в старом config.yml нет секции worldguard, берём разумные флаги по умолчанию
         l.flagsBefore = m.contains("worldguard.flags-before")
                 ? new ArrayList<>(m.getStringList("worldguard.flags-before"))
-                : new ArrayList<>(List.of("build deny", "tnt deny", "pvp allow", "chest-access deny", "use allow",
+                : new ArrayList<>(List.of("build deny", "tnt allow", "pvp allow", "chest-access deny", "use allow",
                         "interact allow", "lava-flow deny", "water-flow deny"));
         l.flagsAfter = m.contains("worldguard.flags-after")
                 ? new ArrayList<>(m.getStringList("worldguard.flags-after"))
-                : new ArrayList<>(List.of("build allow", "block-break allow", "block-place allow", "tnt deny",
+                : new ArrayList<>(List.of("build allow", "block-break allow", "block-place allow", "tnt allow",
                         "pvp allow", "use allow", "interact allow", "chest-access allow"));
         l.wgRemoveOnRaid = m.getBoolean("worldguard.remove-on-raid", true);
 

@@ -1457,6 +1457,21 @@ public final class DungeonManager {
 
     // ------------------------------------------------------------------ тики, расписание, очистка
 
+    /** Ближайший к блоку привата игрок (для засчитывания рейда при открытии без события). */
+    private Player nearestPlayer(World w, Dungeon d, double radius) {
+        Location gl = guardLocation(d);
+        Player best = null;
+        double bd = radius * radius;
+        for (Player p : w.getPlayers()) {
+            double dd = p.getLocation().distanceSquared(gl);
+            if (dd <= bd) {
+                bd = dd;
+                best = p;
+            }
+        }
+        return best;
+    }
+
     private void tick() {
         nightCheck();
         intervalCheck();
@@ -1469,6 +1484,14 @@ public final class DungeonManager {
             }
             cleanupTick(d, lvl, now);
             if (d.state == Dungeon.State.PASTING) {
+                continue;
+            }
+            // Страховка: блок привата исчез любым способом (динамит MirageTNT, взрыв другого плагина, команда) —
+            // данж открывается, регион удаляется, а не остаётся «пустым».
+            if (d.state == Dungeon.State.ACTIVE && plugin.getConfig().getBoolean("guard-broken-opens", true)
+                    && w.isChunkLoaded(d.guardX >> 4, d.guardZ >> 4)
+                    && w.getBlockAt(d.guardX, d.guardY, d.guardZ).getType().isAir()) {
+                open(d, nearestPlayer(w, d, 12));
                 continue;
             }
             if (d.state == Dungeon.State.COUNTDOWN) {

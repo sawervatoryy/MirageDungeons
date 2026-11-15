@@ -6,7 +6,7 @@
 
     <groupId>org.github.sawervatoryy</groupId>
     <artifactId>MirageDungeons</artifactId>
-    <version>v0.1</version>
+    <version>v0.1.1</version>
     <packaging>jar</packaging>
 
     <name>MirageDungeons</name>

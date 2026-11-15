@@ -166,6 +166,9 @@ auto-chests:
 
 # Взрывы
 explosion-opens-guard: true   # взрыв, разрушивший блок привата, открывает данж
+# Страховка: если блок привата исчез любым способом (динамит MirageTNT, чужой взрыв, команда), данж открывается
+# и регион удаляется — а не остаётся данж с «просто сломанным» блоком.
+guard-broken-opens: true
 # Любой взрыв ближе этого радиуса к блоку привата тоже открывает данж, даже если ядро не разрушено.
 # 0 — выключено (по умолчанию: иначе оболочка из обсидиана не имела бы смысла).
 explosion-trigger-radius: 0
@@ -180,11 +183,11 @@ protection:
   before-open:                # только для mode: internal. Пока блок привата цел
     block-break: false
     block-place: false
-    tnt: false
+    tnt: true
   after-open:                 # только для mode: internal. После уничтожения блока привата
     block-break: true
     block-place: true
-    tnt: false
+    tnt: true
   # Белые и чёрные списки материалов (работают в обоих режимах, когда ломать/ставить вообще разрешено).
   # Если whitelist не пуст — разрешены только перечисленные блоки.
   break-whitelist: []
@@ -208,7 +211,7 @@ protection:
 # Для каждого данжа создаётся регион WorldGuard с именем «<region-prefix><id данжа>».
 # Плагин сам удаляет регион вместе с данжем и откатом территории.
 # Блок привата открывается по-прежнему самим плагином: даже если флаги запрещают ломать блоки
-# или tnt deny отменяет взрыв, уничтожение блока привата откроет данж.
+# или tnt deny отменяет взрыв (по умолчанию теперь tnt allow), уничтожение блока привата откроет данж.
 # Формат флага: «имя значение», как в команде /rg flag. Все флаги WorldGuard и плагинов-расширений.
 # Примеры (не включены): "greeting &fВы вошли на территорию сокровищницы!", "farewell &fВы вышли.",
 #                        "entry allow", "mob-spawning deny", "blocked-cmds ..."
@@ -222,7 +225,7 @@ worldguard:
   # Флаги, пока блок привата цел. Сундуки закрыты (chest-access deny) до рейда.
   flags-before:
     - "build deny"
-    - "tnt deny"
+    - "tnt allow"
     - "pvp allow"
     - "chest-access deny"
     - "use allow"
@@ -234,7 +237,7 @@ worldguard:
     - "build allow"
     - "block-break allow"
     - "block-place allow"
-    - "tnt deny"
+    - "tnt allow"
     - "pvp allow"
     - "use allow"
     - "interact allow"
