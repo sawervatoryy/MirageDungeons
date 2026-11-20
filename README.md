@@ -2,6 +2,11 @@
 
 # MirageDungeons
 
+![Paper](https://img.shields.io/badge/Paper-1.21.4-00ACFF?style=for-the-badge)
+![Java](https://img.shields.io/badge/Java-21-FF7B00?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-0.1-00B0F2?style=for-the-badge)
+![Studio](https://img.shields.io/badge/MirageStudio-sawervatoryy-8A2BE2?style=for-the-badge)
+
 **Сокровищницы-данжи для рейда в 5 уровней для Paper 1.21.4**
 
 Блок привата, стражи, боссы, запертые сундуки с ключами, сундуки-мимики, компас сокровищниц,
